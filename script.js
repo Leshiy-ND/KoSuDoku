@@ -9,8 +9,8 @@ var playingField     = "",
 
 
 function adjustFieldFontSize() {
-    var field = document.getElementById("field");
-    var candField = document.getElementById("cand-field");
+    var field = document.querySelector(".field");
+    var candField = document.querySelector(".cand-field");
 
     var orienter = (window.innerWidth < window.innerHeight) ? window.innerWidth : window.innerHeight;
     var fieldRatio = 0.8;
@@ -23,8 +23,6 @@ function adjustFieldFontSize() {
 
 function updateSelection() {
     document.querySelectorAll("[tile]").forEach(tileElem => {
-        // if (tileElem.className == "tile-fixed") return;
-
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
 
@@ -57,11 +55,11 @@ function genNewField(_complexity) {
 
     var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
 
-    var field     = document.getElementById("field");
+    var field     = document.querySelector(".field");
     field.innerHTML = "";
     field.style.gridTemplateColumns = gridTemplate;
 
-    var candField = document.getElementById("cand-field");
+    var candField = document.querySelector(".cand-field");
     candField.innerHTML = "";
     candField.style.gridTemplateColumns = gridTemplate;
 
@@ -85,7 +83,7 @@ function genNewField(_complexity) {
 
         for (var t = 1; t <= complexitySquare; t++) {
             var tile = document.createElement('div');
-            tile.className = ((s + t) % 5 == 0) ? "tile-fixed" : "tile";
+            tile.className = "tile";
             tile.setAttribute("tile", t);
             // tile.textContent = t;
 

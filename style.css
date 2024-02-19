@@ -3,6 +3,42 @@ body {
     background-color: darkgrey;
 }
 
+button {
+    padding: 10px;
+    border-radius: 10px;
+}
+button:hover {
+    background-color: bisque;
+}
+button:active {
+    background-color: gold;
+}
+
+
+
+.controls {
+    position: absolute;
+    bottom: 10vh;
+    right:  10vh;
+    height: 80vh;
+    width:  calc(100vw - 110vh);
+
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid black;
+}
+.controls * {
+    font-size: 125%;
+    transition-duration: 0.2s;
+}
+@media (orientation: portrait) {
+    .controls {
+        bottom: 10vw;
+        left:   10vw;
+        width:  80vw;
+        height: calc(100vh - 110vw);
+    }
+}
+
 
 
 .field, .cand-field {
@@ -17,6 +53,8 @@ body {
     background-color: white;
     border: 1px solid black;
     font-weight: bold;
+}
+.field * {
     transition-duration: 0.2s;
 }
 .cand-field {
