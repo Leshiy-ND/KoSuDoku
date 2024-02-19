@@ -6,12 +6,21 @@ body {
 button {
     padding: 10px;
     border-radius: 10px;
+    font-size: inherit;
+    cursor: pointer;
 }
 button:hover {
     background-color: bisque;
 }
 button:active {
     background-color: gold;
+}
+.btn-hold, .btn-hold:hover {
+    background-color: gold;
+}
+
+.num-holder {
+    display: grid;
 }
 
 
@@ -22,12 +31,9 @@ button:active {
     right:  10vh;
     height: 80vh;
     width:  calc(100vw - 110vh);
-
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid black;
+    font-size: 125%;
 }
 .controls * {
-    font-size: 125%;
     transition-duration: 0.2s;
 }
 @media (orientation: portrait) {
