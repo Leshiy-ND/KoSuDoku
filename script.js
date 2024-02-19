@@ -96,7 +96,7 @@ function genNewField(_complexity) {
             for (var c = 1; c <= complexitySquare; c++) {
                 var candCand = document.createElement('div');
                 candCand.setAttribute("cand-cand", c);
-                if (c != 5) candCand.textContent = c;
+                candCand.textContent = c;
 
                 candTile.appendChild( candCand );
             }
