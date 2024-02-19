@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    background-color: darkgrey;
+}
+
+
+
+.field, .cand-field {
+    position: absolute;
+    top:   10vh;
+    left:  10vh;
+    width: 80vh;
+    display: grid;
+    aspect-ratio: 1;
+}
+.field {
+    background-color: white;
+    border: 1px solid black;
+    font-weight: bold;
+    transition-duration: 0.2s;
+}
+.cand-field {
+    pointer-events: none;
+    color: rgba(0, 0, 0, 0.6);
+}
+@media (orientation: portrait) {
+    .field, .cand-field {
+        top:   10vw;
+        left:  10vw;
+        width: 80vw;
+    }
+}
+
+
+
+[square] {
+    display: grid;
+    border: 1px solid black;
+}
+.square-even {
+    background-color: rgba(63, 31, 0, 0.05);
+}
+[cand-square], [cand-tile] {
+    display: grid;
+}
+
+
+
+[tile], [cand-cand] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+[tile] {
+    border: 1px solid black;
+}
+.tile {
+    cursor: pointer;
+}
+.tile-fixed {
+    cursor: default;
+    background-color: #cccccc;
+}
+.tile-fixed-selected-full {
+    cursor: default;
+    background-color: rgb(204, 204, 204);
+    background-color: rgb(255, 215,   0);
+    background-color: rgb(214, 206, 153);
+
+    background-color: hsl( 0,   0%, 80%);
+    background-color: hsl(51, 100%, 50%);
+    background-color: hsl(51,  90%, 40%);
+}
+.tile-fixed-selected-half {
+    cursor: default;
+    background-color: rgb(204, 204, 204);
+    background-color: rgb(255, 228, 196);
+    background-color: rgb(214, 208, 202);
+
+    background-color: hsl( 0,   0%, 80%);
+    background-color: hsl(33, 100%, 88%);
+    background-color: hsl(33,  90%, 70%);
+}
+.tile-selected-full {
+    cursor: default;
+    background-color: gold;
+}
+.tile-selected-half {
+    cursor: pointer;
+    background-color: rgba(135, 206, 250, .3);
+    background-color: rgba(255, 228, 196, 0.7);
+}
+.tile:hover, .tile-selected-half:hover {
+    background-color: bisque;
+}
