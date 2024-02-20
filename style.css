@@ -27,7 +27,7 @@ button:active {
 
 .controls {
     position: absolute;
-    bottom: 10vh;
+    top:   100vh;
     right:  10vh;
     height: 80vh;
     width:  calc(100vw - 110vh);
@@ -38,7 +38,7 @@ button:active {
 }
 @media (orientation: portrait) {
     .controls {
-        bottom: 10vw;
+        top:   100vw;
         left:   10vw;
         width:  80vw;
         height: calc(100vh - 110vw);
