@@ -79,7 +79,7 @@ button:active {
 
 [square] {
     display: grid;
-    border: 1px solid black;
+    border: 1px solid rgba(0, 0, 0, .6);
 }
 .square-even {
     background-color: rgba(63, 31, 0, 0.05);
@@ -96,7 +96,7 @@ button:active {
     align-items: center;
 }
 [tile] {
-    border: 1px solid black
+    border: 1px dashed rgba(0, 0, 0, .3);
 }
 .tile {
     cursor: pointer;
