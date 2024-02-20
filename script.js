@@ -44,6 +44,51 @@ function updateSelection() {
     });
 }
 
+function setSelectedTile(value = "0") {
+    document.querySelectorAll("[tile]").forEach(tileElem => {
+        const tile   = parseInt( tileElem               .getAttribute("tile")   );
+        const square = parseInt( tileElem.parentElement .getAttribute("square") );
+
+        if (selectedSquare == square && selectedTile == tile) {
+            if (value == "0") {
+                tileElem.firstChild.style.opacity = "0";
+                hideSelectedCandidates(false);
+            } else {
+                tileElem.firstChild.textContent = value;
+                tileElem.firstChild.style.opacity = "1";
+                hideSelectedCandidates(true);
+            }
+        }
+    });
+}
+
+function hideSelectedCandidates(value) {
+    document.querySelectorAll("[cand-tile]").forEach(tileElem => {
+        const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
+        const square = parseInt( tileElem.parentElement .getAttribute("cand-square") );
+
+        if (selectedSquare == square && selectedTile == tile) {
+            tileElem.style.opacity = value ? "0" : "1";
+        }
+    });
+}
+
+function switchSelectedCandidates(value) {
+    document.querySelectorAll("[cand-tile]").forEach(tileElem => {
+        const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
+        const square = parseInt( tileElem.parentElement .getAttribute("cand-square") );
+
+        if (selectedSquare == square && selectedTile == tile) {
+            tileElem.querySelectorAll("[cand-cand]").forEach(candElem => {
+                const candidate = candElem.getAttribute("cand-cand");
+                if (candidate == value) {
+                    candElem.style.opacity = (candElem.style.opacity == "0") ? "1" : "0";
+                }
+            });
+        }
+    });
+}
+
 
 
 function genNewField(_complexity) {
@@ -87,13 +132,20 @@ function genNewField(_complexity) {
             tile.className = "tile";
             tile.setAttribute("tile", t);
 
+            var value = document.createElement('div');
+            value.textContent   = "0";
+            value.style.opacity = "0";
+            tile.appendChild(value);
+
             var candTile = document.createElement('div');
             candTile.setAttribute("cand-tile", t);
             candTile.style.gridTemplateColumns = gridTemplate;
+            candTile.style.opacity = "1";
 
             for (var c = 1; c <= complexitySquare; c++) {
                 var candCand = document.createElement('div');
                 candCand.setAttribute("cand-cand", c);
+                candCand.style.opacity = "0";
                 candCand.textContent = c;
 
                 candTile.appendChild( candCand );
@@ -124,7 +176,7 @@ function genNewField(_complexity) {
         });
     });
 
-    document.getElementById("btn-candidate").style.display = "initial";
+    document.getElementById("main-buttons").style.display = "initial";
     var numHolder = document.querySelector(".num-holder");
     numHolder.innerHTML = "";
     numHolder.style.gridTemplateColumns = gridTemplate;
@@ -141,14 +193,11 @@ function genNewField(_complexity) {
             const number = numButton.getAttribute("btn-number");
             console.log(number);
 
-            document.querySelectorAll("[tile]").forEach(tileElem => {
-                const tile   = parseInt( tileElem               .getAttribute("tile")   );
-                const square = parseInt( tileElem.parentElement .getAttribute("square") );
-                
-                if (selectedSquare == square && selectedTile == tile) {
-                    tileElem.textContent = number;
-                }
-            });
+            if (candidate) {
+                switchSelectedCandidates(number);
+            } else {
+                setSelectedTile(number);
+            }
         });
     });
 }
@@ -156,14 +205,15 @@ function genNewField(_complexity) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById("btn-candidate").style.display = "none";
+    document.getElementById("main-buttons").style.display = "none";
 
-    document.getElementById("btn-new-game-2").addEventListener("click", () => { genNewField(2) });
-    document.getElementById("btn-new-game-3").addEventListener("click", () => { genNewField(3) });
-    document.getElementById("btn-new-game-4").addEventListener("click", () => { genNewField(4) });
+    document.getElementById( "btn-new-game-2" ).addEventListener("click", () => { genNewField(2) });
+    document.getElementById( "btn-new-game-3" ).addEventListener("click", () => { genNewField(3) });
+    document.getElementById( "btn-new-game-4" ).addEventListener("click", () => { genNewField(4) });
 
-    document.getElementById("btn-resize-nums").addEventListener("click", () => { adjustFieldFontSize() });
-    document.getElementById("btn-candidate").addEventListener("click", () => {
+    document.getElementById( "btn-resize-nums" ).addEventListener("click", () => { adjustFieldFontSize() });
+    document.getElementById( "btn-clear"       ).addEventListener("click", () => { setSelectedTile()     });
+    document.getElementById( "btn-candidate"   ).addEventListener("click", () => {
         candidate = !candidate;
         var button = document.getElementById("btn-candidate");
         button.className = candidate ? "btn-hold" : "";

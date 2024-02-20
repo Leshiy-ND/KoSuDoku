@@ -27,8 +27,8 @@ button:active {
 
 .controls {
     position: absolute;
-    top:   100vh;
-    right:  10vh;
+    top:    10vh;
+    left:  100vh;
     height: 80vh;
     width:  calc(100vw - 110vh);
     font-size: 125%;
@@ -60,7 +60,7 @@ button:active {
     border: 1px solid black;
     font-weight: bold;
 }
-.field * {
+.field *, .cand-field * {
     transition-duration: 0.2s;
 }
 .cand-field {
@@ -96,7 +96,7 @@ button:active {
     align-items: center;
 }
 [tile] {
-    border: 1px solid black;
+    border: 1px solid black
 }
 .tile {
     cursor: pointer;
