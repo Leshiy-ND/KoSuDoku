@@ -5,7 +5,8 @@ var playingField     = "",
     selectedRow      = 0,
     complexity       = 0,
     complexitySquare = 0
-    candidate        = false;
+    candidate        = false
+    fixedTiles       = new Map();
 
 
 
@@ -28,7 +29,7 @@ function updateSelection() {
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
 
         if (selectedSquare == square && selectedTile == tile) {
-            tileElem.className = tileElem.className.includes("fixed") ? "tile-fixed-selected-full" : "tile-selected-full";
+            tileElem.className = fixedTiles.has(square + "-" + tile) ? "tile-fixed-selected-full" : "tile-selected-full";
             return;
         }
 
@@ -36,11 +37,11 @@ function updateSelection() {
         const row       =   Math.floor((square - 1) / complexity) * complexity   +   Math.floor((tile - 1) / complexity)   +   1;
 
         if (selectedCollumn == collumn || selectedRow == row) {
-            tileElem.className = tileElem.className.includes("fixed") ? "tile-fixed-selected-half" : "tile-selected-half";
+            tileElem.className = fixedTiles.has(square + "-" + tile) ? "tile-fixed-selected-half" : "tile-selected-half";
             return;
         }
 
-        tileElem.className = tileElem.className.includes("fixed") ? "tile-fixed" : "tile";
+        tileElem.className = fixedTiles.has(square + "-" + tile) ? "tile-fixed" : "tile";
     });
 }
 
@@ -48,6 +49,7 @@ function setSelectedTile(value = "0") {
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        if (fixedTiles.has(square + "-" + tile)) return;
 
         if (selectedSquare == square && selectedTile == tile) {
             if (value == "0") {
@@ -77,6 +79,7 @@ function switchSelectedCandidates(value) {
     document.querySelectorAll("[cand-tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("cand-square") );
+        if (fixedTiles.has(square + "-" + tile)) return;
 
         if (selectedSquare == square && selectedTile == tile) {
             tileElem.querySelectorAll("[cand-cand]").forEach(candElem => {
@@ -98,6 +101,7 @@ function genNewField(_complexity) {
     selectedRow      = 0;
     complexity       = _complexity;
     complexitySquare = complexity * complexity;
+    fixedTiles       = new Map();
 
     var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
 
@@ -140,7 +144,6 @@ function genNewField(_complexity) {
             var candTile = document.createElement('div');
             candTile.setAttribute("cand-tile", t);
             candTile.style.gridTemplateColumns = gridTemplate;
-            candTile.style.opacity = "1";
 
             for (var c = 1; c <= complexitySquare; c++) {
                 var candCand = document.createElement('div');
@@ -163,7 +166,14 @@ function genNewField(_complexity) {
             const newTile   = parseInt( tileElem               .getAttribute("tile")   );
             const newSquare = parseInt( tileElem.parentElement .getAttribute("square") );
 
-            if (selectedSquare == newSquare && selectedTile == newTile) return;
+            if (selectedSquare == newSquare && selectedTile == newTile) {
+                selectedSquare   = 0;
+                selectedTile     = 0;
+                selectedCollumn  = 0;
+                selectedRow      = 0;
+                updateSelection();
+                return;
+            }
 
             selectedTile   = newTile;
             selectedSquare = newSquare;
@@ -191,7 +201,6 @@ function genNewField(_complexity) {
     document.querySelectorAll("[btn-number]").forEach(numButton => {
         numButton.addEventListener("click", () => {
             const number = numButton.getAttribute("btn-number");
-            console.log(number);
 
             if (candidate) {
                 switchSelectedCandidates(number);
@@ -199,6 +208,55 @@ function genNewField(_complexity) {
                 setSelectedTile(number);
             }
         });
+    });
+
+    fillField();
+}
+
+function fillField() {
+    if (complexity == 3) {
+        fixedTiles.set("1-2", "5");
+        fixedTiles.set("1-3", "1");
+        fixedTiles.set("1-5", "2");
+
+        fixedTiles.set("2-4", "6");
+        fixedTiles.set("2-8", "1");
+
+        fixedTiles.set("3-2", "2");
+        fixedTiles.set("3-6", "7");
+        fixedTiles.set("3-7", "8");
+        fixedTiles.set("3-9", "9");
+
+        fixedTiles.set("4-2", "9");
+        fixedTiles.set("4-7", "4");
+        fixedTiles.set("4-9", "5");
+
+        fixedTiles.set("5-5", "8");
+        fixedTiles.set("5-8", "7");
+
+        fixedTiles.set("6-4", "5");
+        fixedTiles.set("6-7", "9");
+
+        fixedTiles.set("7-1", "7");
+        fixedTiles.set("7-7", "6");
+
+        fixedTiles.set("8-3", "2");
+        fixedTiles.set("8-5", "4");
+        fixedTiles.set("8-7", "3");
+        fixedTiles.set("8-8", "5");
+
+        fixedTiles.set("9-7", "1");
+    }
+    
+    document.querySelectorAll("[tile]").forEach(tileElem => {
+        const tile   = parseInt( tileElem               .getAttribute("tile")   );
+        const square = parseInt( tileElem.parentElement .getAttribute("square") );
+
+        if (fixedTiles.has(square + "-" + tile)) {
+            tileElem.className = "tile-fixed";
+            tileElem.firstChild.style.opacity = "1";
+            tileElem.firstChild.textContent = fixedTiles.get(square + "-" + tile);
+        }
     });
 }
 
