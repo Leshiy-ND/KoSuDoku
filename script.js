@@ -1,13 +1,20 @@
 var playingField     = "",
     selectedSquare   = 0,
     selectedTile     = 0,
-    selectedCollumn  = 0,
-    selectedRow      = 0,
+    selectedX        = 0,
+    selectedY        = 0,
     complexity       = 0,
     complexitySquare = 0
     candidate        = false
     filledTiles      = new Map(),
     fixedTiles       = new Set();
+
+const Direction = {
+    Up    : "Up",
+    Down  : "Down",
+    Left  : "Left",
+    Right : "Right",
+}
 
 
 
@@ -24,21 +31,48 @@ function adjustFieldFontSize() {
     candField.style.fontSize = newFontSize / complexity + "px";
 }
 
+function moveSelection(direction) {
+    switch (direction) {
+        case Direction.Up:
+            if (selectedY == "0") { selectedY = complexitySquare; break; }
+            if (selectedY == "1") selectedY = complexitySquare;
+            else                  selectedY--;
+            break;
+        case Direction.Down:
+            if (selectedY == complexitySquare) selectedY = "1";
+            else                               selectedY++;
+            break;
+        case Direction.Left:
+            if (selectedX == "0") { selectedX = complexitySquare; break; }
+            if (selectedX == "1") selectedX = complexitySquare;
+            else                  selectedX--;
+            break;
+        case Direction.Right:
+            if (selectedX == complexitySquare) selectedX = "1";
+            else                               selectedX++;
+            break;
+        default:
+            return;
+    }
+    updateSelection();
+}
+
 function updateSelection() {
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        const x      = parseInt( tileElem               .getAttribute("x")      );
+        const y      = parseInt( tileElem               .getAttribute("y")      );
         const cord   = square + "-" + tile;
 
-        if (selectedSquare == square && selectedTile == tile) {
+        if (selectedX == x && selectedY == y) {
             tileElem.className = fixedTiles.has(cord) ? "tile-fixed-selected-full" : "tile-selected-full";
+            selectedSquare     = square;
+            selectedTile       = tile;
             return;
         }
 
-        const collumn   =              (square - 1) % complexity  * complexity   +              (tile - 1) % complexity    +   1;
-        const row       =   Math.floor((square - 1) / complexity) * complexity   +   Math.floor((tile - 1) / complexity)   +   1;
-
-        if (selectedCollumn == collumn || selectedRow == row) {
+        if (selectedX == x || selectedY == y) {
             tileElem.className = fixedTiles.has(cord) ? "tile-fixed-selected-half" : "tile-selected-half";
             return;
         }
@@ -104,8 +138,8 @@ function switchSelectedCandidates(value) {
 function genNewField(_complexity) {
     selectedSquare   = 0;
     selectedTile     = 0;
-    selectedCollumn  = 0;
-    selectedRow      = 0;
+    selectedX        = 0;
+    selectedY        = 0;
     complexity       = _complexity;
     complexitySquare = complexity * complexity;
     filledTiles      = new Map();
@@ -140,9 +174,14 @@ function genNewField(_complexity) {
         candSquare.style.gridTemplateColumns = gridTemplate;
 
         for (var t = 1; t <= complexitySquare; t++) {
+            const x   =              (s - 1) % complexity  * complexity   +              (t - 1) % complexity    +   1;
+            const y   =   Math.floor((s - 1) / complexity) * complexity   +   Math.floor((t - 1) / complexity)   +   1;
+
             var tile = document.createElement('div');
             tile.className = "tile";
             tile.setAttribute("tile", t);
+            tile.setAttribute("x",    x);
+            tile.setAttribute("y",    y);
 
             var value = document.createElement('div');
             value.textContent   = "0";
@@ -177,8 +216,8 @@ function genNewField(_complexity) {
             if (selectedSquare == newSquare && selectedTile == newTile) {
                 selectedSquare   = 0;
                 selectedTile     = 0;
-                selectedCollumn  = 0;
-                selectedRow      = 0;
+                selectedX        = 0;
+                selectedY        = 0;
                 updateSelection();
                 return;
             }
@@ -186,10 +225,10 @@ function genNewField(_complexity) {
             selectedTile   = newTile;
             selectedSquare = newSquare;
 
-            selectedCollumn   =              (selectedSquare - 1) % complexity  * complexity   +              (selectedTile - 1) % complexity    +   1;
-            selectedRow       =   Math.floor((selectedSquare - 1) / complexity) * complexity   +   Math.floor((selectedTile - 1) / complexity)   +   1;
+            selectedX = parseInt( tileElem.getAttribute("x") );
+            selectedY = parseInt( tileElem.getAttribute("y") );
 
-            console.log( "collumn:", selectedCollumn, ",   row:",  selectedRow, ",   square:", selectedSquare,  ",   tile:", selectedTile );
+            // console.log( "x:", selectedX, ",   y:",  selectedY, ",   square:", selectedSquare,  ",   tile:", selectedTile );
             updateSelection();
         });
     });
@@ -288,5 +327,28 @@ document.addEventListener('DOMContentLoaded', function() {
         candidate = !candidate;
         var button = document.getElementById("btn-candidate");
         button.className = candidate ? "btn-hold" : "";
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.isComposing || event.code === 229) return;
+
+        switch (event.key) {
+            case "ArrowUp":
+                moveSelection(Direction.Up);
+                console.log("focus Up");
+                break;
+            case "ArrowDown":
+                moveSelection(Direction.Down);
+                console.log("focus Down");
+                break;
+            case "ArrowLeft":
+                console.log("focus Left");
+                moveSelection(Direction.Left);
+                break;
+            case "ArrowRight":
+                console.log("focus Right");
+                moveSelection(Direction.Right);
+                break;
+        }
     });
 });
