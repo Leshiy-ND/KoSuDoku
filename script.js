@@ -6,7 +6,8 @@ var playingField     = "",
     complexity       = 0,
     complexitySquare = 0
     candidate        = false
-    fixedTiles       = new Map();
+    filledTiles      = new Map(),
+    fixedTiles       = new Set();
 
 
 
@@ -27,9 +28,10 @@ function updateSelection() {
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        const cord   = square + "-" + tile;
 
         if (selectedSquare == square && selectedTile == tile) {
-            tileElem.className = fixedTiles.has(square + "-" + tile) ? "tile-fixed-selected-full" : "tile-selected-full";
+            tileElem.className = fixedTiles.has(cord) ? "tile-fixed-selected-full" : "tile-selected-full";
             return;
         }
 
@@ -37,11 +39,11 @@ function updateSelection() {
         const row       =   Math.floor((square - 1) / complexity) * complexity   +   Math.floor((tile - 1) / complexity)   +   1;
 
         if (selectedCollumn == collumn || selectedRow == row) {
-            tileElem.className = fixedTiles.has(square + "-" + tile) ? "tile-fixed-selected-half" : "tile-selected-half";
+            tileElem.className = fixedTiles.has(cord) ? "tile-fixed-selected-half" : "tile-selected-half";
             return;
         }
 
-        tileElem.className = fixedTiles.has(square + "-" + tile) ? "tile-fixed" : "tile";
+        tileElem.className = fixedTiles.has(cord) ? "tile-fixed" : "tile";
     });
 }
 
@@ -49,13 +51,16 @@ function setSelectedTile(value = "0") {
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
-        if (fixedTiles.has(square + "-" + tile)) return;
+        const cord = square + "-" + tile;
+        if (fixedTiles.has(cord)) return;
 
         if (selectedSquare == square && selectedTile == tile) {
             if (value == "0") {
+                filledTiles.delete(cord);
                 tileElem.firstChild.style.opacity = "0";
                 hideSelectedCandidates(false);
             } else {
+                filledTiles.set(cord, value);
                 tileElem.firstChild.textContent = value;
                 tileElem.firstChild.style.opacity = "1";
                 hideSelectedCandidates(true);
@@ -101,7 +106,8 @@ function genNewField(_complexity) {
     selectedRow      = 0;
     complexity       = _complexity;
     complexitySquare = complexity * complexity;
-    fixedTiles       = new Map();
+    filledTiles      = new Map();
+    fixedTiles       = new Set();
 
     var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
 
@@ -215,48 +221,53 @@ function genNewField(_complexity) {
 
 function fillField() {
     if (complexity == 3) {
-        fixedTiles.set("1-2", "5");
-        fixedTiles.set("1-3", "1");
-        fixedTiles.set("1-5", "2");
+        filledTiles.set("1-2", "5");
+        filledTiles.set("1-3", "1");
+        filledTiles.set("1-5", "2");
 
-        fixedTiles.set("2-4", "6");
-        fixedTiles.set("2-8", "1");
+        filledTiles.set("2-4", "6");
+        filledTiles.set("2-8", "1");
 
-        fixedTiles.set("3-2", "2");
-        fixedTiles.set("3-6", "7");
-        fixedTiles.set("3-7", "8");
-        fixedTiles.set("3-9", "9");
+        filledTiles.set("3-2", "2");
+        filledTiles.set("3-6", "7");
+        filledTiles.set("3-7", "8");
+        filledTiles.set("3-9", "9");
 
-        fixedTiles.set("4-2", "9");
-        fixedTiles.set("4-7", "4");
-        fixedTiles.set("4-9", "5");
+        filledTiles.set("4-2", "9");
+        filledTiles.set("4-7", "4");
+        filledTiles.set("4-9", "5");
 
-        fixedTiles.set("5-5", "8");
-        fixedTiles.set("5-8", "7");
+        filledTiles.set("5-5", "8");
+        filledTiles.set("5-8", "7");
 
-        fixedTiles.set("6-4", "5");
-        fixedTiles.set("6-7", "9");
+        filledTiles.set("6-4", "5");
+        filledTiles.set("6-7", "9");
 
-        fixedTiles.set("7-1", "7");
-        fixedTiles.set("7-7", "6");
+        filledTiles.set("7-1", "7");
+        filledTiles.set("7-7", "6");
 
-        fixedTiles.set("8-3", "2");
-        fixedTiles.set("8-5", "4");
-        fixedTiles.set("8-7", "3");
-        fixedTiles.set("8-8", "5");
+        filledTiles.set("8-3", "2");
+        filledTiles.set("8-5", "4");
+        filledTiles.set("8-7", "3");
+        filledTiles.set("8-8", "5");
 
-        fixedTiles.set("9-7", "1");
+        filledTiles.set("9-7", "1");
+
+        filledTiles.forEach((value, cord) => {
+            fixedTiles.add(cord);
+        });
     }
     
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        const cord   = square + "-" + tile;
 
-        if (fixedTiles.has(square + "-" + tile)) {
-            tileElem.className = "tile-fixed";
+        if (filledTiles.has(cord)) {
             tileElem.firstChild.style.opacity = "1";
-            tileElem.firstChild.textContent = fixedTiles.get(square + "-" + tile);
+            tileElem.firstChild.textContent = filledTiles.get(cord);
         }
+        if (fixedTiles.has(cord)) tileElem.className = "tile-fixed";
     });
 }
 
