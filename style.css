@@ -96,30 +96,23 @@ button:active {
     align-items: center;
 }
 [tile] {
+    cursor: pointer;
     border: 1px dashed rgba(0, 0, 0, .3);
 }
-.tile {
-    cursor: pointer;
-}
 .tile-fixed {
-    cursor: default;
     background-color: rgba(0, 0, 0, .1);
 }
 .tile-fixed-selected-full {
-    cursor: default;
     background-color: hsl(42,  90%, 70%);
 }
 .tile-fixed-selected-half {
-    cursor: default;
     /* background-color: hsl(33,  90%, 70%); */
     background-color: rgba(247, 185, 110, .7);
 }
 .tile-selected-full {
-    cursor: default;
     background-color: gold;
 }
 .tile-selected-half {
-    cursor: pointer;
     background-color: rgba(255, 228, 196, .7);
 }
 .tile:hover, .tile-selected-half:hover {
