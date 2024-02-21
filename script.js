@@ -48,19 +48,21 @@ function updateSelection() {
 }
 
 function setSelectedTile(value = "0") {
+    const selectedCord = selectedSquare + "-" + selectedTile;
+    if (value == "0") filledTiles.delete(selectedCord);
+    else              filledTiles.set(selectedCord, value);
+
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
         const cord = square + "-" + tile;
         if (fixedTiles.has(cord)) return;
 
-        if (selectedSquare == square && selectedTile == tile) {
+        if (selectedCord == cord) {
             if (value == "0") {
-                filledTiles.delete(cord);
                 tileElem.firstChild.style.opacity = "0";
                 hideSelectedCandidates(false);
             } else {
-                filledTiles.set(cord, value);
                 tileElem.firstChild.textContent = value;
                 tileElem.firstChild.style.opacity = "1";
                 hideSelectedCandidates(true);
