@@ -59,8 +59,8 @@ function moveSelection(direction) {
 
 function updateSelection() {
     document.querySelectorAll("[tile]").forEach(tileElem => {
-        const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const x      = parseInt( tileElem               .getAttribute("x")      );
         const y      = parseInt( tileElem               .getAttribute("y")      );
         const cord   = square + "-" + tile;
@@ -87,8 +87,8 @@ function setSelectedTile(value = "0") {
     else              filledTiles.set(selectedCord, value);
 
     document.querySelectorAll("[tile]").forEach(tileElem => {
-        const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const cord = square + "-" + tile;
         if (fixedTiles.has(cord)) return;
 
@@ -107,8 +107,8 @@ function setSelectedTile(value = "0") {
 
 function hideSelectedCandidates(value) {
     document.querySelectorAll("[cand-tile]").forEach(tileElem => {
-        const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("cand-square") );
+        const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
 
         if (selectedSquare == square && selectedTile == tile) {
             tileElem.style.opacity = value ? "0" : "1";
@@ -118,8 +118,8 @@ function hideSelectedCandidates(value) {
 
 function switchSelectedCandidates(value) {
     document.querySelectorAll("[cand-tile]").forEach(tileElem => {
-        const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("cand-square") );
+        const tile   = parseInt( tileElem               .getAttribute("cand-tile")   );
         if (fixedTiles.has(square + "-" + tile)) return;
 
         if (selectedSquare == square && selectedTile == tile) {
@@ -210,8 +210,8 @@ function genNewField(_complexity) {
 
     document.querySelectorAll("[tile]").forEach(tileElem => {
         tileElem.addEventListener("click", () => {
-            const newTile   = parseInt( tileElem               .getAttribute("tile")   );
             const newSquare = parseInt( tileElem.parentElement .getAttribute("square") );
+            const newTile   = parseInt( tileElem               .getAttribute("tile")   );
 
             if (selectedSquare == newSquare && selectedTile == newTile) {
                 selectedSquare   = 0;
@@ -222,8 +222,8 @@ function genNewField(_complexity) {
                 return;
             }
 
-            selectedTile   = newTile;
             selectedSquare = newSquare;
+            selectedTile   = newTile;
 
             selectedX = parseInt( tileElem.getAttribute("x") );
             selectedY = parseInt( tileElem.getAttribute("y") );
@@ -300,8 +300,8 @@ function fillField() {
     }
     
     document.querySelectorAll("[tile]").forEach(tileElem => {
-        const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
+        const tile   = parseInt( tileElem               .getAttribute("tile")   );
         const cord   = square + "-" + tile;
 
         if (filledTiles.has(cord)) {
