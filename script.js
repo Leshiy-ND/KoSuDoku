@@ -335,18 +335,14 @@ document.addEventListener('DOMContentLoaded', function() {
         switch (event.key) {
             case "ArrowUp":
                 moveSelection(Direction.Up);
-                console.log("focus Up");
                 break;
             case "ArrowDown":
                 moveSelection(Direction.Down);
-                console.log("focus Down");
                 break;
             case "ArrowLeft":
-                console.log("focus Left");
                 moveSelection(Direction.Left);
                 break;
             case "ArrowRight":
-                console.log("focus Right");
                 moveSelection(Direction.Right);
                 break;
         }
