@@ -118,3 +118,28 @@ button:active {
 .tile:hover, .tile-selected-half:hover {
     background-color: bisque;
 }
+
+
+
+.popup-bg {
+    display: none;  /* none <-> flex */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top:  0;
+    width:  200%;
+    height: 200%;
+    background-color: rgba(0, 0, 0, .7);
+}
+
+.popup-panel {
+    /* position: relative; */
+    /* min-width: 25vw;
+    max-width: 70vw; */
+    margin:  auto;
+    padding: 2rem;
+    color:            white;
+    background-color: hsla(0, 0%, 20%, .9); /* darkslategrey */
+    border: 2px solid gold;
+    border-radius: 10px;
+}

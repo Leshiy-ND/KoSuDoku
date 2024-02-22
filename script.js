@@ -4,8 +4,9 @@ var playingField     = "",
     selectedX        = 0,
     selectedY        = 0,
     complexity       = 0,
-    complexitySquare = 0
-    candidate        = false
+    complexitySquare = 0,
+    tilesAmt         = 0,
+    candidate        = false,
     filledTiles      = new Map(),
     fixedTiles       = new Set();
 
@@ -81,6 +82,43 @@ function updateSelection() {
     });
 }
 
+function checkAll() {
+    for (let s = 1; s <= complexitySquare; s++) {
+        var squareSet = new Set();
+
+        for (let t = 1; t <= complexitySquare; t++) {
+            const value = filledTiles.get(s + "-" + t);
+            if (squareSet.has(value)) return false;
+            squareSet.add(value);
+        }
+    }
+    for (let x = 1; x <= complexitySquare; x++) {
+        var columnSet = new Set();
+
+        for (let y = 1; y <= complexitySquare; y++) {
+            const s   =   Math.floor((y - 1) / complexity) * complexity   +   Math.floor((x - 1) / complexity)   +   1;
+            const t   =              (y - 1) % complexity  * complexity   +              (x - 1) % complexity    +   1;
+
+            const value = filledTiles.get(s + "-" + t);
+            if (columnSet.has(value)) return false;
+            columnSet.add(value);
+        }
+    }
+    for (let y = 1; y <= complexitySquare; y++) {
+        var rowSet = new Set();
+
+        for (let x = 1; x <= complexitySquare; x++) {
+            const s   =   Math.floor((y - 1) / complexity) * complexity   +   Math.floor((x - 1) / complexity)   +   1;
+            const t   =              (y - 1) % complexity  * complexity   +              (x - 1) % complexity    +   1;
+
+            const value = filledTiles.get(s + "-" + t);
+            if (rowSet.has(value)) return false;
+            rowSet.add(value);
+        }
+    }
+    return true;
+}
+
 function setSelectedTile(value = "0") {
     const selectedCord = selectedSquare + "-" + selectedTile;
     if (value == "0") filledTiles.delete(selectedCord);
@@ -103,6 +141,15 @@ function setSelectedTile(value = "0") {
             }
         }
     });
+
+    if (filledTiles.size == tilesAmt) {
+        if (checkAll()) {
+            console.log("YOU WIN!!!");
+            document.getElementById("popup-win").style.display = "flex";
+        } else {
+            console.log("Too bad...");
+        }
+    }
 }
 
 function hideSelectedCandidates(value) {
@@ -142,6 +189,7 @@ function genNewField(_complexity) {
     selectedY        = 0;
     complexity       = _complexity;
     complexitySquare = complexity * complexity;
+    tilesAmt         = complexitySquare * complexitySquare;
     filledTiles      = new Map();
     fixedTiles       = new Set();
 
@@ -228,7 +276,7 @@ function genNewField(_complexity) {
             selectedX = parseInt( tileElem.getAttribute("x") );
             selectedY = parseInt( tileElem.getAttribute("y") );
 
-            // console.log( "x:", selectedX, ",   y:",  selectedY, ",   square:", selectedSquare,  ",   tile:", selectedTile );
+            console.log( "x:", selectedX, ",   y:",  selectedY, ",   square:", selectedSquare,  ",   tile:", selectedTile );
             updateSelection();
         });
     });
@@ -347,4 +395,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
         }
     });
+
+    document.getElementById("popup-win").onclick = function() {
+        document.getElementById("popup-win").style.display = "none";
+    };
 });
