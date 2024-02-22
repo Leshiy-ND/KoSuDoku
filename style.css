@@ -139,7 +139,7 @@ button:active {
     margin:  auto;
     padding: 2rem;
     color:            white;
-    background-color: hsla(0, 0%, 20%, .9); /* darkslategrey */
+    background-color: hsla(0, 0%, 20%, .9);
     border: 2px solid gold;
     border-radius: 10px;
 }
