@@ -91,7 +91,7 @@ function checkAll() {
 
         for (let t = 1; t <= complexitySquare; t++) {
             const value = filledTiles.get(s + "-" + t);
-            if (squareSet.has(value)) return false;
+            if (squareSet.has(value) || value == "0") return false;
             squareSet.add(value);
         }
     }
@@ -103,7 +103,7 @@ function checkAll() {
             const t   =              (y - 1) % complexity  * complexity   +              (x - 1) % complexity    +   1;
 
             const value = filledTiles.get(s + "-" + t);
-            if (columnSet.has(value)) return false;
+            if (columnSet.has(value) || value == "0") return false;
             columnSet.add(value);
         }
     }
@@ -115,7 +115,7 @@ function checkAll() {
             const t   =              (y - 1) % complexity  * complexity   +              (x - 1) % complexity    +   1;
 
             const value = filledTiles.get(s + "-" + t);
-            if (rowSet.has(value)) return false;
+            if (rowSet.has(value) || value == "0") return false;
             rowSet.add(value);
         }
     }
