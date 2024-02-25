@@ -51,11 +51,11 @@ button:active {
     width: 80vh;
     display: grid;
     aspect-ratio: 1;
+    font-family: "Oswald";
 }
 .field {
     background-color: white;
     border: 1px solid black;
-    font-weight: bold;
     font-size: calc(100vh * var(--ratio-font-num));
 }
 .cand-field {
