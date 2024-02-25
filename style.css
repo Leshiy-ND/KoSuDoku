@@ -33,9 +33,6 @@ button:active {
     width:  calc(100vw - 110vh);
     font-size: 125%;
 }
-.controls * {
-    transition-duration: 0.2s;
-}
 @media (orientation: portrait) {
     .controls {
         top:   100vw;
@@ -60,9 +57,6 @@ button:active {
     border: 1px solid black;
     font-weight: bold;
 }
-.field *, .cand-field * {
-    transition-duration: 0.2s;
-}
 .cand-field {
     pointer-events: none;
     color: rgba(0, 0, 0, 0.6);
@@ -86,6 +80,9 @@ button:active {
 }
 [cand-square], [cand-tile] {
     display: grid;
+}
+[cand-square] *, [cand-tile] * {
+    transition-duration: 0.2s;
 }
 
 
@@ -133,9 +130,6 @@ button:active {
 }
 
 .popup-panel {
-    /* position: relative; */
-    /* min-width: 25vw;
-    max-width: 70vw; */
     margin:  auto;
     padding: 2rem;
     color:            white;
