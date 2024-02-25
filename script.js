@@ -296,7 +296,6 @@ function genNewField(_complexity) {
         });
     });
 
-    document.getElementById("main-buttons").style.display = "initial";
     var numHolder = document.querySelector(".num-holder");
     numHolder.innerHTML = "";
     numHolder.style.gridTemplateColumns = gridTemplate;
@@ -377,14 +376,29 @@ function fillField() {
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById("main-buttons").style.display = "none";
+function endGame() {
+    var game = document.querySelector(".game");
+    game.style.display = "none";
 
+    var menu = document.querySelector(".menu");
+    menu.style = "";
+
+    var field = document.querySelector(".field");
+    field.innerHTML = "";
+
+    var candField = document.querySelector(".cand-field");
+    candField.innerHTML = "";
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
     document.getElementById( "btn-new-game-2" ).addEventListener("click", () => { genNewField(2) });
     document.getElementById( "btn-new-game-3" ).addEventListener("click", () => { genNewField(3) });
     document.getElementById( "btn-new-game-4" ).addEventListener("click", () => { genNewField(4) });
 
     document.getElementById( "btn-resize-nums" ).addEventListener("click", () => { adjustFieldFontSize() });
+    document.getElementById( "btn-end-game"    ).addEventListener("click", () => { endGame()             });
     document.getElementById( "btn-clear"       ).addEventListener("click", () => { setSelectedTile()     });
     document.getElementById( "btn-candidate"   ).addEventListener("click", () => {
         candidate = !candidate;
@@ -413,11 +427,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById("popup-win").onclick = function() {
         document.getElementById("popup-win").style.display = "none";
-
-        var game = document.querySelector(".game");
-        game.style.display = "none";
-
-        var menu = document.querySelector(".menu");
-        menu.style = "";
+        endGame();
     };
 });
