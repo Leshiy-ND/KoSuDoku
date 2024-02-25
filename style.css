@@ -56,16 +56,24 @@ button:active {
     background-color: white;
     border: 1px solid black;
     font-weight: bold;
+    font-size: calc(100vh * var(--ratio-font-num));
 }
 .cand-field {
     pointer-events: none;
     color: rgba(0, 0, 0, 0.6);
+    font-size: calc(100vh * var(--ratio-font-can));
 }
 @media (orientation: portrait) {
     .field, .cand-field {
         top:   10vw;
         left:  10vw;
         width: 80vw;
+    }
+    .field {
+        font-size: calc(100vw * var(--ratio-font-num));
+    }
+    .cand-field {
+        font-size: calc(100vw * var(--ratio-font-can));
     }
 }
 

@@ -20,6 +20,9 @@ const Direction = {
 
 
 function adjustFieldFontSize() {
+    // var styleElem = document.head.ge
+    return;
+
     var field = document.querySelector(".field");
     var candField = document.querySelector(".cand-field");
 
@@ -192,6 +195,12 @@ function genNewField(_complexity) {
     tilesAmt         = complexitySquare * complexitySquare;
     filledTiles      = new Map();
     fixedTiles       = new Set();
+
+    var root = document.documentElement;
+    var ratioField = 0.8;
+    var ratioText  = ratioField * 0.6 / complexitySquare;
+    root.style.setProperty("--ratio-font-num", ratioText);
+    root.style.setProperty("--ratio-font-can", ratioText / complexity);
 
     var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
 
