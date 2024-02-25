@@ -204,7 +204,13 @@ function genNewField(_complexity) {
 
     var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
 
-    var field     = document.querySelector(".field");
+    var menu = document.querySelector(".menu");
+    menu.style.display = "none";
+
+    var game = document.querySelector(".game");
+    game.style = "";
+
+    var field = document.querySelector(".field");
     field.innerHTML = "";
     field.style.gridTemplateColumns = gridTemplate;
 
@@ -407,5 +413,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById("popup-win").onclick = function() {
         document.getElementById("popup-win").style.display = "none";
+
+        var game = document.querySelector(".game");
+        game.style.display = "none";
+
+        var menu = document.querySelector(".menu");
+        menu.style = "";
     };
 });
