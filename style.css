@@ -1,6 +1,12 @@
 body {
     margin: 0;
+    font-size: 3vh;
     background-color: darkgrey;
+}
+@media (orientation: portrait) {
+    body {
+        font-size: 4vw;
+    }
 }
 
 
@@ -26,10 +32,16 @@ body {
 
 
 button {
-    padding: 10px;
-    border-radius: 10px;
+    padding:       2vh;
+    border-radius: 2vh;
     font-size: inherit;
     cursor: pointer;
+}
+@media (orientation: portrait) {
+    button {
+        padding:       2vw;
+        border-radius: 2vw;
+    }
 }
 button:hover {
     background-color: bisque;
@@ -53,7 +65,6 @@ button:active {
     left:  100vh;
     height: 80vh;
     width:  calc(100vw - 110vh);
-    font-size: 125%;
 }
 @media (orientation: portrait) {
     .controls {
