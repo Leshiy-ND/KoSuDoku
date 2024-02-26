@@ -12,40 +12,40 @@ const PageType = {
     GameSimple : "GameSimple",
 }
 
-var playingField     = "",
-    selectedSquare   = 0,
-    selectedTile     = 0,
-    selectedX        = 0,
-    selectedY        = 0,
-    complexity       = 0,
-    complexitySquare = 0,
-    tilesAmt         = 0,
-    candidate        = false,
-    filledTiles      = new Map(),
-    fixedTiles       = new Set(),
-    pageType         = PageType.MenuMain;
+var playingField   = "",
+    selectedSquare = 0,
+    selectedTile   = 0,
+    selectedX      = 0,
+    selectedY      = 0,
+    base           = 0,
+    baseSquare     = 0,
+    tilesAmt       = 0,
+    candidate      = false,
+    filledTiles    = new Map(),
+    fixedTiles     = new Set(),
+    pageType       = PageType.MenuMain;
 
 
 
 function moveSelection(direction) {
     switch (direction) {
         case Direction.Up:
-            if (selectedY == "0") { selectedY = complexitySquare; break; }
-            if (selectedY == "1") selectedY = complexitySquare;
-            else                  selectedY--;
+            if (selectedY == "0") { selectedY = baseSquare; break; }
+            if (selectedY == "1")   selectedY = baseSquare;
+            else                    selectedY--;
             break;
         case Direction.Down:
-            if (selectedY == complexitySquare) selectedY = "1";
-            else                               selectedY++;
+            if (selectedY == baseSquare) selectedY = "1";
+            else                         selectedY++;
             break;
         case Direction.Left:
-            if (selectedX == "0") { selectedX = complexitySquare; break; }
-            if (selectedX == "1") selectedX = complexitySquare;
-            else                  selectedX--;
+            if (selectedX == "0") { selectedX = baseSquare; break; }
+            if (selectedX == "1")   selectedX = baseSquare;
+            else                    selectedX--;
             break;
         case Direction.Right:
-            if (selectedX == complexitySquare) selectedX = "1";
-            else                               selectedX++;
+            if (selectedX == baseSquare) selectedX = "1";
+            else                         selectedX++;
             break;
         default:
             return;
@@ -78,33 +78,33 @@ function updateSelection() {
 }
 
 function checkAll() {
-    for (let s = 1; s <= complexitySquare; s++) {
+    for (let s = 1; s <= baseSquare; s++) {
         var squareSet = new Set();
 
-        for (let t = 1; t <= complexitySquare; t++) {
+        for (let t = 1; t <= baseSquare; t++) {
             const value = filledTiles.get(s + "-" + t);
             if (squareSet.has(value) || value == "0") return false;
             squareSet.add(value);
         }
     }
-    for (let x = 1; x <= complexitySquare; x++) {
+    for (let x = 1; x <= baseSquare; x++) {
         var columnSet = new Set();
 
-        for (let y = 1; y <= complexitySquare; y++) {
-            const s   =   Math.floor((y - 1) / complexity) * complexity   +   Math.floor((x - 1) / complexity)   +   1;
-            const t   =              (y - 1) % complexity  * complexity   +              (x - 1) % complexity    +   1;
+        for (let y = 1; y <= baseSquare; y++) {
+            const s   =   Math.floor((y - 1) / base) * base   +   Math.floor((x - 1) / base)   +   1;
+            const t   =              (y - 1) % base  * base   +              (x - 1) % base    +   1;
 
             const value = filledTiles.get(s + "-" + t);
             if (columnSet.has(value) || value == "0") return false;
             columnSet.add(value);
         }
     }
-    for (let y = 1; y <= complexitySquare; y++) {
+    for (let y = 1; y <= baseSquare; y++) {
         var rowSet = new Set();
 
-        for (let x = 1; x <= complexitySquare; x++) {
-            const s   =   Math.floor((y - 1) / complexity) * complexity   +   Math.floor((x - 1) / complexity)   +   1;
-            const t   =              (y - 1) % complexity  * complexity   +              (x - 1) % complexity    +   1;
+        for (let x = 1; x <= baseSquare; x++) {
+            const s   =   Math.floor((y - 1) / base) * base   +   Math.floor((x - 1) / base)   +   1;
+            const t   =              (y - 1) % base  * base   +              (x - 1) % base    +   1;
 
             const value = filledTiles.get(s + "-" + t);
             if (rowSet.has(value) || value == "0") return false;
@@ -177,24 +177,24 @@ function switchSelectedCandidates(value) {
 
 
 
-function genNewField(_complexity) {
-    selectedSquare   = 0;
-    selectedTile     = 0;
-    selectedX        = 0;
-    selectedY        = 0;
-    complexity       = _complexity;
-    complexitySquare = complexity * complexity;
-    tilesAmt         = complexitySquare * complexitySquare;
-    filledTiles      = new Map();
-    fixedTiles       = new Set();
+function genNewField(_base) {
+    selectedSquare = 0;
+    selectedTile   = 0;
+    selectedX      = 0;
+    selectedY      = 0;
+    base           = _base;
+    baseSquare     = base * base;
+    tilesAmt       = baseSquare * baseSquare;
+    filledTiles    = new Map();
+    fixedTiles     = new Set();
 
     var root = document.documentElement;
     var ratioField = 0.8;
-    var ratioText  = ratioField * 0.6 / complexitySquare;
+    var ratioText  = ratioField * 0.6 / baseSquare;
     root.style.setProperty("--ratio-font-num", ratioText);
-    root.style.setProperty("--ratio-font-can", ratioText / complexity);
+    root.style.setProperty("--ratio-font-can", ratioText / base);
 
-    var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
+    var gridTemplate = "repeat(" + base + ", " + 100.0 / base + "%)";
 
     var field = document.querySelector(".field");
     field.innerHTML = "";
@@ -204,12 +204,12 @@ function genNewField(_complexity) {
     candField.innerHTML = "";
     candField.style.gridTemplateColumns = gridTemplate;
 
-    var evenComplexity = (complexity % 2 == 0);
+    var evenComplexity = (base % 2 == 0);
     var even = evenComplexity;
 
-    for (var s = 1; s <= complexitySquare; s++) {
+    for (var s = 1; s <= baseSquare; s++) {
         even = !even;
-        if (evenComplexity && s % complexity == 1) even = !even;
+        if (evenComplexity && s % base == 1) even = !even;
 
         var square = document.createElement('div');
         square.className = even ? "square-even" : "square-noteven";
@@ -220,9 +220,9 @@ function genNewField(_complexity) {
         candSquare.setAttribute("cand-square", s);
         candSquare.style.gridTemplateColumns = gridTemplate;
 
-        for (var t = 1; t <= complexitySquare; t++) {
-            const x   =              (s - 1) % complexity  * complexity   +              (t - 1) % complexity    +   1;
-            const y   =   Math.floor((s - 1) / complexity) * complexity   +   Math.floor((t - 1) / complexity)   +   1;
+        for (var t = 1; t <= baseSquare; t++) {
+            const x   =              (s - 1) % base  * base   +              (t - 1) % base    +   1;
+            const y   =   Math.floor((s - 1) / base) * base   +   Math.floor((t - 1) / base)   +   1;
 
             var tile = document.createElement('div');
             tile.className = "tile";
@@ -239,7 +239,7 @@ function genNewField(_complexity) {
             candTile.setAttribute("cand-tile", t);
             candTile.style.gridTemplateColumns = gridTemplate;
 
-            for (var c = 1; c <= complexitySquare; c++) {
+            for (var c = 1; c <= baseSquare; c++) {
                 var candCand = document.createElement('div');
                 candCand.setAttribute("cand-cand", c);
                 candCand.style.opacity = "0";
@@ -284,7 +284,7 @@ function genNewField(_complexity) {
     numHolder.innerHTML = "";
     numHolder.style.gridTemplateColumns = gridTemplate;
 
-    for (var n = 1; n <= complexitySquare; n++) {
+    for (var n = 1; n <= baseSquare; n++) {
         var numButton = document.createElement('button');
         numButton.setAttribute("btn-number", n);
         numButton.textContent = n;
@@ -307,7 +307,7 @@ function genNewField(_complexity) {
 }
 
 function setGame() {
-    if (complexity == 3) {
+    if (base == 3) {
         filledTiles.set("1-2", "5");
         filledTiles.set("1-3", "1");
         filledTiles.set("1-5", "2");
@@ -381,7 +381,7 @@ function endGame() {
 function saveSet() {
     var save = {};
     save.data      = "KoSudoku set";
-    save.base      = complexity;
+    save.base      = base;
     save.dimention = 2;
     save.fixed     = {};
     
