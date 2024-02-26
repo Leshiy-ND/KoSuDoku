@@ -1,3 +1,17 @@
+const Direction = {
+    Up    : "Up",
+    Down  : "Down",
+    Left  : "Left",
+    Right : "Right",
+}
+
+const PageType = {
+    MenuMain   : "MenuMain",
+    MenuSet    : "MenuSet",
+    GameSet    : "GameSet",
+    GameSimple : "GameSimple",
+}
+
 var playingField     = "",
     selectedSquare   = 0,
     selectedTile     = 0,
@@ -8,32 +22,10 @@ var playingField     = "",
     tilesAmt         = 0,
     candidate        = false,
     filledTiles      = new Map(),
-    fixedTiles       = new Set();
-
-const Direction = {
-    Up    : "Up",
-    Down  : "Down",
-    Left  : "Left",
-    Right : "Right",
-}
+    fixedTiles       = new Set(),
+    pageType         = PageType.MenuMain;
 
 
-
-function adjustFieldFontSize() {
-    // var styleElem = document.head.ge
-    return;
-
-    var field = document.querySelector(".field");
-    var candField = document.querySelector(".cand-field");
-
-    var orienter = (window.innerWidth < window.innerHeight) ? window.innerWidth : window.innerHeight;
-    var fieldRatio = 0.8;
-    var fontRatio = 0.6;
-    var newFontSize = orienter * fieldRatio * fontRatio / complexitySquare;
-
-    field.style.fontSize = newFontSize + "px";
-    candField.style.fontSize = newFontSize / complexity + "px";
-}
 
 function moveSelection(direction) {
     switch (direction) {
@@ -204,12 +196,6 @@ function genNewField(_complexity) {
 
     var gridTemplate = "repeat(" + complexity + ", " + 100.0 / complexity + "%)";
 
-    var menu = document.querySelector(".menu");
-    menu.style.display = "none";
-
-    var game = document.querySelector(".game");
-    game.style = "";
-
     var field = document.querySelector(".field");
     field.innerHTML = "";
     field.style.gridTemplateColumns = gridTemplate;
@@ -217,8 +203,6 @@ function genNewField(_complexity) {
     var candField = document.querySelector(".cand-field");
     candField.innerHTML = "";
     candField.style.gridTemplateColumns = gridTemplate;
-
-    adjustFieldFontSize();
 
     var evenComplexity = (complexity % 2 == 0);
     var even = evenComplexity;
@@ -319,10 +303,10 @@ function genNewField(_complexity) {
         });
     });
 
-    fillField();
+    if (pageType == PageType.GameSimple) fillField();
 }
 
-function fillField() {
+function setGame() {
     if (complexity == 3) {
         filledTiles.set("1-2", "5");
         filledTiles.set("1-3", "1");
@@ -360,7 +344,11 @@ function fillField() {
             fixedTiles.add(cord);
         });
     }
-    
+}
+
+function fillField() {
+    setGame();
+
     document.querySelectorAll("[tile]").forEach(tileElem => {
         const square = parseInt( tileElem.parentElement .getAttribute("square") );
         const tile   = parseInt( tileElem               .getAttribute("tile")   );
@@ -390,22 +378,132 @@ function endGame() {
     candField.innerHTML = "";
 }
 
+function saveSet() {
+    var save = {};
+    save.data      = "KoSudoku set";
+    save.base      = complexity;
+    save.dimention = 2;
+    save.fixed     = {};
+    
+    filledTiles.forEach((value, cord) => {
+        save.fixed[cord] = parseInt(value);
+    });
+
+    var saveElem = document.getElementById("save");
+    saveElem.textContent = JSON.stringify(save);
+}
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById( "btn-new-game-2" ).addEventListener("click", () => { genNewField(2) });
-    document.getElementById( "btn-new-game-3" ).addEventListener("click", () => { genNewField(3) });
-    document.getElementById( "btn-new-game-4" ).addEventListener("click", () => { genNewField(4) });
 
-    document.getElementById( "btn-resize-nums" ).addEventListener("click", () => { adjustFieldFontSize() });
-    document.getElementById( "btn-end-game"    ).addEventListener("click", () => { endGame()             });
-    document.getElementById( "btn-clear"       ).addEventListener("click", () => { setSelectedTile()     });
-    document.getElementById( "btn-candidate"   ).addEventListener("click", () => {
+function openPage(_pageType) {
+    pageType = _pageType;
+    document.body.innerHTML = "";
+
+    if (pageType.includes("Menu")) {
+        var menu = document.createElement("div");
+        menu.className = "menu";
+
+        var img = document.createElement("img");
+        img.src = "logo.png";
+        menu.appendChild(img);
+
+        if (pageType == PageType.MenuMain) {
+            var newButton = document.createElement("button");
+            newButton.textContent = "Create set";
+            newButton.addEventListener("click", () => { openPage(PageType.MenuSet) });
+            menu.appendChild(newButton);
+        } else /* if (pageType == PageType.MenuSet) */ {
+            for (let i = 2; i <= 4; i++) {
+                var newButton = document.createElement("button");
+                newButton.textContent = "Base = " + i;
+                newButton.addEventListener("click", () => {
+                    openPage(PageType.GameSet);
+                    genNewField(i);
+                });
+                menu.appendChild(newButton);
+            }
+        }
+
+        document.body.appendChild(menu);
+        return;
+    }
+
+    /* pageType.includes("Game") */
+
+    var game = document.createElement("div");
+    game.className = "game";
+
+    var newElem = document.createElement("div");
+    newElem.className = "field";
+    document.body.appendChild(newElem);
+
+    newElem = document.createElement("div");
+    newElem.className = "cand-field";
+    document.body.appendChild(newElem);
+
+    var controls = document.createElement("div");
+    controls.className = "controls";
+    document.body.appendChild(controls);
+
+    newElem = document.createElement("button");
+    newElem.id          = "btn-candidate";
+    newElem.textContent = "Candidate";
+    newElem.addEventListener("click", () => {
         candidate = !candidate;
         var button = document.getElementById("btn-candidate");
         button.className = candidate ? "btn-hold" : "";
     });
+    controls.appendChild(newElem);
 
+    newElem = document.createElement("button");
+    newElem.textContent = "Clear";
+    newElem.addEventListener("click", () => { setSelectedTile() });
+    controls.appendChild(newElem);
+
+    newElem = document.createElement("p");
+    controls.appendChild(newElem);
+
+    newElem = document.createElement("div");
+    newElem.className = "num-holder";
+    controls.appendChild(newElem);
+
+    newElem = document.createElement("p");
+    controls.appendChild(newElem);
+
+    newElem = document.createElement("button");
+    newElem.textContent = "Quit";
+    newElem.addEventListener("click", () => { openPage(PageType.MenuMain) });
+    controls.appendChild(newElem);
+
+    if (pageType == PageType.GameSet) {
+        newElem = document.createElement("button");
+        newElem.textContent = "Save set";
+        newElem.addEventListener("click", () => { saveSet() });
+        controls.appendChild(newElem);
+    
+        newElem = document.createElement("p");
+        newElem.id = "save";
+        controls.appendChild(newElem);
+    } else /* if (pageType == PageType.GameSimple) */ {
+        var popup = document.createElement("div");
+        popup.className = "popup-bg";
+        popup.id        = "popup-win";
+        popup.onclick = function() { openPage(PageType.MenuMain) };
+        document.body.appendChild(popup);
+
+        newElem = document.createElement("div");
+        newElem.className   = "popup-panel";
+        newElem.style       = "font-size: 500%;";
+        newElem.textContent = "🎉";
+        popup.appendChild(newElem);
+    }
+
+    document.body.appendChild(game);
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener("keydown", (event) => {
         if (event.isComposing || event.code === 229) return;
 
@@ -424,9 +522,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
         }
     });
-
-    document.getElementById("popup-win").onclick = function() {
-        document.getElementById("popup-win").style.display = "none";
-        endGame();
-    };
+    
+    openPage(PageType.MenuMain);
 });
