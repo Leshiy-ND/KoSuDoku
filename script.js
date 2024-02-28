@@ -298,6 +298,11 @@ function genNewField(_base) {
         numButton.setAttribute("btn-number", n);
         numButton.textContent = n;
         numHolder.appendChild(numButton);
+
+        if ( n != 1                     ) numButton.style.borderTopLeftRadius     = "0";
+        if ( n != base                  ) numButton.style.borderTopRightRadius    = "0";
+        if ( n != baseSquare - base + 1 ) numButton.style.borderBottomLeftRadius  = "0";
+        if ( n != baseSquare            ) numButton.style.borderBottomRightRadius = "0";
     }
 
     document.querySelectorAll("[btn-number]").forEach(numButton => {
