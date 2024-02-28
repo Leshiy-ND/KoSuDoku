@@ -80,6 +80,9 @@ button:active {
         margin-left: 1vw;
     }
 }
+.num-holder button {
+    margin-left: 0;
+}
 
 
 
