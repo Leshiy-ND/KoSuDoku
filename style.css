@@ -66,12 +66,18 @@ button:active {
     height: 80vh;
     width:  calc(100vw - 110vh);
 }
+.controls button, .controls canvas {
+    margin-left: 1vh;
+}
 @media (orientation: portrait) {
     .controls {
         top:   100vw;
         left:   10vw;
         width:  80vw;
         height: calc(100vh - 110vw);
+    }
+    .controls button, .controls canvas {
+        margin-left: 1vw;
     }
 }
 

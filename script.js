@@ -50,6 +50,13 @@ function moveSelection(direction) {
         default:
             return;
     }
+    const newSquare   =   Math.floor((selectedY - 1) / base) * base   +   Math.floor((selectedX - 1) / base)   +   1;
+    const newTile     =              (selectedY - 1) % base  * base   +              (selectedX - 1) % base    +   1;
+
+    if (selectedSquare != newSquare) drawSlice2D();
+
+    selectedSquare = newSquare;
+    selectedTile   = newTile;
     updateSelection();
 }
 
@@ -63,8 +70,6 @@ function updateSelection() {
 
         if (selectedX == x && selectedY == y) {
             tileElem.className = fixedTiles.has(cord) ? "tile-fixed-selected-full" : "tile-selected-full";
-            selectedSquare     = square;
-            selectedTile       = tile;
             return;
         }
 
@@ -188,6 +193,8 @@ function genNewField(_base) {
     filledTiles    = new Map();
     fixedTiles     = new Set();
 
+    drawSlice2D();
+
     var root = document.documentElement;
     var ratioField = 0.8;
     var ratioText  = ratioField * 0.6 / baseSquare;
@@ -266,6 +273,7 @@ function genNewField(_base) {
                 selectedX        = 0;
                 selectedY        = 0;
                 updateSelection();
+                drawSlice2D();
                 return;
             }
 
@@ -277,6 +285,7 @@ function genNewField(_base) {
 
             console.log( "x:", selectedX, ",   y:",  selectedY, ",   square:", selectedSquare,  ",   tile:", selectedTile );
             updateSelection();
+            drawSlice2D();
         });
     });
 
@@ -393,6 +402,86 @@ function saveSet() {
     saveElem.textContent = JSON.stringify(save);
 }
 
+function drawSlice2D() {
+    const _canvasSize     = 100,
+          _colorBG        = "#FFF",
+          _colorBorderF   = "#000",
+          _colorBorderS   = "rgba(  0,  0, 0, .6  )",
+          _colorBorderT   = "rgba(  0,  0, 0, " + 0.3 / base + "  )",
+          _colorEven      = "rgba( 63, 31, 0, .05 )",
+          _colorSelected  = "gold";
+    
+    var canvas = document.getElementById("slice-2d");
+    canvas.height = _canvasSize;
+    canvas.width  = _canvasSize;
+    canvas.style.background = _colorBG;
+    canvas.style.border = "1px solid " + _colorBorderF;
+    canvas.style.borderRadius = _canvasSize / 10 + "px";
+
+    var context = canvas.getContext("2d");
+    context.clearRect(0, 0, _canvasSize, _canvasSize);
+
+    const squareSize = _canvasSize / base;
+
+    const selectedSX = Math.floor( (selectedX - 1) / base ),
+          selectedSY = Math.floor( (selectedY - 1) / base );
+
+    const evenComplexity = (base % 2 == 0);
+    var even = evenComplexity;
+    var s = 0;
+
+    for (let y = 0; y < base; y++) {
+        for (let x = 0; x < base; x++) {
+            even = !even;
+            s++;
+            if (evenComplexity && s % base == 1) even = !even;
+
+            if (selectedSY == y && selectedSX == x) context.fillStyle = _colorSelected;
+            else if (even)                          context.fillStyle = _colorEven;
+            else                                    continue;
+
+            context.fillRect(squareSize * x, squareSize * y, squareSize, squareSize);
+        }
+    }
+
+    context.strokeStyle = _colorBorderS;
+    context.beginPath();
+
+    for (let i = 1; i < base; i++) {
+        context.moveTo( squareSize * i,              0 );
+        context.lineTo( squareSize * i,    _canvasSize );
+        context.moveTo(              0, squareSize * i );
+        context.lineTo(    _canvasSize, squareSize * i );
+    }
+
+    // context.lineWidth = 2;
+    context.stroke();
+    context.closePath();
+
+    const tileSize = _canvasSize / baseSquare;
+    // context.setLineDash([1, tileSize - 1]);
+    context.strokeStyle = _colorBorderT;
+    context.beginPath();
+
+    for (let i = 1; i < baseSquare; i++) {
+        if ((i) % base == 0) continue;
+
+        context.moveTo( tileSize * i,            0 );
+        context.lineTo( tileSize * i,  _canvasSize );
+        context.moveTo(            0, tileSize * i );
+        context.lineTo(  _canvasSize, tileSize * i );
+
+        // context.moveTo( tileSize * i,     tileSize );
+        // context.lineTo( tileSize * i,  _canvasSize );
+        // context.moveTo(     tileSize, tileSize * i );
+        // context.lineTo(  _canvasSize, tileSize * i );
+    }
+
+    // context.lineWidth = 2;
+    context.stroke();
+    context.closePath();
+}
+
 
 
 function openPage(_pageType) {
@@ -402,6 +491,7 @@ function openPage(_pageType) {
     if (pageType.includes("Menu")) {
         var menu = document.createElement("div");
         menu.className = "menu";
+        document.body.appendChild(menu);
 
         var img = document.createElement("img");
         img.src = "logo.png";
@@ -412,7 +502,8 @@ function openPage(_pageType) {
             newButton.textContent = "Create set";
             newButton.addEventListener("click", () => { openPage(PageType.MenuSet) });
             menu.appendChild(newButton);
-        } else /* if (pageType == PageType.MenuSet) */ {
+        }
+        else /* if (pageType == PageType.MenuSet) */ {
             for (let i = 2; i <= 4; i++) {
                 var newButton = document.createElement("button");
                 newButton.textContent = "Base = " + i;
@@ -423,15 +514,14 @@ function openPage(_pageType) {
                 menu.appendChild(newButton);
             }
         }
-
-        document.body.appendChild(menu);
         return;
     }
 
-    /* pageType.includes("Game") */
+    /* if (pageType.includes("Game")) */
 
     var game = document.createElement("div");
     game.className = "game";
+    document.body.appendChild(game);
 
     var newElem = document.createElement("div");
     newElem.className = "field";
@@ -470,6 +560,11 @@ function openPage(_pageType) {
     newElem = document.createElement("p");
     controls.appendChild(newElem);
 
+    var canvas = document.createElement("canvas");
+    canvas.id = "slice-2d";
+    canvas.style = "float: left;";
+    controls.appendChild(canvas);
+
     newElem = document.createElement("button");
     newElem.textContent = "Quit";
     newElem.addEventListener("click", () => { openPage(PageType.MenuMain) });
@@ -497,8 +592,6 @@ function openPage(_pageType) {
         newElem.textContent = "🎉";
         popup.appendChild(newElem);
     }
-
-    document.body.appendChild(game);
 }
 
 
